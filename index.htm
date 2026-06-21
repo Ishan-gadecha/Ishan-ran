@@ -771,11 +771,16 @@
             setTimeout(() => loader.remove(), 800);
         }
 
-        window.addEventListener('load', () => {
-            setTimeout(removeLoader, 1500);
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(removeLoader, 300);
         });
 
-        setTimeout(removeLoader, 5000);
+        window.addEventListener('load', () => {
+            removeLoader();
+        });
+
+        setTimeout(removeLoader, 2000);
+        requestAnimationFrame(() => requestAnimationFrame(removeLoader));
 
         let isMobileMode = window.innerWidth <= 768;
         function checkDeviceMode() {
