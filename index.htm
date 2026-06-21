@@ -30,21 +30,19 @@
             -webkit-tap-highlight-color: transparent;
         }
         button, .gift-wrapper, #musicControl, .playlist-card { cursor: pointer; }
-        #bgVideo {
+        #bgMorning {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -2; opacity: 0.6;
+            z-index: -2; opacity: 0.95;
             pointer-events: none;
         }
         .video-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(240, 244, 248, 0.35); backdrop-filter: blur(5px);
+            background: rgba(240, 244, 248, 0.18); backdrop-filter: blur(4px);
             z-index: -1; pointer-events: none;
         }
         .container { text-align: center; z-index: 10; transition: opacity 0.5s ease; width: 90%; max-width: 500px; }
         .hidden { display: none !important; opacity: 0; }
         .visible { display: block !important; opacity: 1; }
-        @keyframes cinematicFade { to { opacity: 1; } }
-        body { opacity: 0; animation: cinematicFade 2s forwards ease-in-out; }
         .shimmer-text {
             font-family: 'Fredoka One', cursive;
             font-size: 3rem; margin-bottom: 10px;
@@ -502,6 +500,11 @@
             font-weight: 600;
         }
 
+        #bgMorning .lottie-holder {
+            width: 100%;
+            height: 100%;
+        }
+
         @media (max-width: 768px) {
             .main-title { font-size: clamp(2rem, 9vw, 3rem); }
             p { font-size: 1rem; }
@@ -534,19 +537,12 @@
     </style>
 </head>
 <body>
-    <div id="loader">
-        <div style="width: 150px; height: 150px;" id="lottieLoader"></div>
-    </div>
-    <style>@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}</style>
-
     <div id="musicToast">
         <span>🎵</span>
         <span id="toastText">Now Playing...</span>
     </div>
 
-    <video id="bgVideo" playsinline autoplay muted loop>
-        <source src="" type="video/mp4">
-    </video>
+    <div id="bgMorning"><div class="lottie-holder" id="lottieMorning"></div></div>
     <div class="video-overlay"></div>
 
     <div id="musicControl" onclick="togglePlaylist()">
@@ -754,32 +750,13 @@
 
     <script>
         try { lottie.loadAnimation({ container: document.getElementById('lFollow'), renderer: 'svg', loop: true, autoplay: true, path: 'butterfly rotated.json' }); } catch(e) {}
-        try { lottie.loadAnimation({ container: document.getElementById('lottieLoader'), renderer: 'svg', loop: true, autoplay: true, path: "happy father's day.json" }); } catch(e) {}
+        try { lottie.loadAnimation({ container: document.getElementById('lottieMorning'), renderer: 'svg', loop: true, autoplay: true, path: 'Forest Morning.json' }); } catch(e) {}
         var animEnvelope, animCherry, animChocolate;
         try {
             animEnvelope = lottie.loadAnimation({ container: document.getElementById('lottieEnvelope'), renderer: 'svg', loop: true, autoplay: true, path: 'Forest Morning.json' });
             animCherry = lottie.loadAnimation({ container: document.getElementById('lottieCherry'), renderer: 'svg', loop: true, autoplay: false, path: 'cherry blossom.json' });
             animChocolate = lottie.loadAnimation({ container: document.getElementById('lottieChocolate'), renderer: 'svg', loop: true, autoplay: false, path: "happy father's day.json" });
         } catch(e) {}
-
-        function removeLoader() {
-            const loader = document.getElementById('loader');
-            if (!loader || loader.dataset.removed === 'true') return;
-            loader.dataset.removed = 'true';
-            loader.style.opacity = '0';
-            setTimeout(() => loader.remove(), 800);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(removeLoader, 300);
-        });
-
-        window.addEventListener('load', () => {
-            removeLoader();
-        });
-
-        setTimeout(removeLoader, 2000);
-        requestAnimationFrame(() => requestAnimationFrame(removeLoader));
 
         let isMobileMode = window.innerWidth <= 768;
         function checkDeviceMode() {
