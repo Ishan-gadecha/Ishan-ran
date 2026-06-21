@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Sacramento&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.13/lottie.min.js"></script>
 
   <style>
   :root {
@@ -192,6 +193,118 @@
       font-size: 13px;
       opacity: 0.8;
     }
+
+    .cinematic {
+      display: grid;
+      gap: 22px;
+    }
+    @media (min-width: 840px) {
+      .cinematic {
+        grid-template-columns: 1.05fr .95fr;
+      }
+    }
+    .cinematic-panel {
+      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.72));
+      border: 1px solid rgba(37, 99, 235, 0.10);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+    .cinematic-frame {
+      min-height: 260px;
+      border-radius: 20px;
+      background: radial-gradient(circle at top, rgba(37,99,235,.12), transparent 65%), #08111f;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      position: relative;
+      overflow: hidden;
+    }
+    .cinematic-frame .lottie-slot {
+      width: 100%;
+      height: 100%;
+      min-height: 260px;
+    }
+    .cinematic-fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      color: #dbeafe;
+      font-size: 14px;
+      letter-spacing: .4px;
+      background: linear-gradient(180deg, rgba(8,17,31,.30), rgba(8,17,31,.65));
+    }
+    .reel-shell {
+      margin-top: 18px;
+      border-radius: 18px;
+      padding: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.68));
+      border: 1px solid rgba(37, 99, 235, 0.10);
+    }
+    .reel-window {
+      height: 220px;
+      overflow: hidden;
+      position: relative;
+      mask-image: linear-gradient(transparent, black 18%, black 82%, transparent);
+      -webkit-mask-image: linear-gradient(transparent, black 18%, black 82%, transparent);
+    }
+    .reel-track {
+      will-change: transform;
+    }
+    .reel-item {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: transparent;
+      background: var(--sunset-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-align: center;
+      filter: drop-shadow(0px 2px 0px rgba(0,0,0,.15));
+    }
+    .reel-track.spinning .reel-item {
+      opacity: .72;
+    }
+    .cinematic-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .small-btn {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(37, 99, 235, 0.20);
+      background: rgba(255,255,255,.86);
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      font-size: 11px;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .small-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px var(--shadow-color-hover), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+    .small-btn.active {
+      background: linear-gradient(180deg, rgba(37,99,235,.12), rgba(59,130,246,.18));
+    }
+    .cinematic-note {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
     
     /* -- ACCESSIBILITY: Respect user motion preferences -- */
     @media (prefers-reduced-motion: reduce){
@@ -240,6 +353,33 @@
           <button class="star">your strength on tough days</button>
         </div>
         <p class="stars-note">Tap each bubble ✨</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container cinematic">
+      <div class="cinematic-panel">
+        <h3 class="mt-0">Cinematic corner</h3>
+        <div class="cinematic-frame">
+          <div id="fatherLottie" class="lottie-slot" aria-hidden="true"></div>
+          <div class="cinematic-fallback" id="fatherLottieFallback">Future Father’s Day graphics will sit here once you add the JSON files.</div>
+        </div>
+        <div class="cinematic-actions">
+          <button class="small-btn" id="shuffleVerseBtn" type="button">Shuffle Verse</button>
+          <button class="small-btn" id="zenVerseBtn" type="button">Zen Mode: Off</button>
+        </div>
+        <p class="cinematic-note">This section is ready for your Father’s Day Lottie graphics. For now it uses a text reel so the page still feels animated.</p>
+      </div>
+
+      <div class="cinematic-panel">
+        <h3 class="mt-0">Verse reel</h3>
+        <div class="reel-shell">
+          <div class="reel-window">
+            <div class="reel-track" id="verseReel"></div>
+          </div>
+        </div>
+        <p class="cinematic-note" id="versePreview">Tap Shuffle Verse to reveal a new line celebrating Papa.</p>
       </div>
     </div>
   </section>
@@ -377,6 +517,73 @@
       if(revealed && !s.textContent.trim().startsWith('✨')) s.textContent = '✨ ' + s.textContent.trim();
     })
   })
+
+  // ===== Cinematic corner: optional Lottie + verse reel =====
+  const versePool = [
+    'Happy Father\'s Day to the man who makes ordinary days feel steady.',
+    'Your support turns hard moments into something we can carry.',
+    'Dad, your calm is the kind of strength I always look up to.',
+    'The safest place in my life has always been your presence.',
+    'Every milestone feels lighter with you beside me.'
+  ];
+  const verseReel = document.getElementById('verseReel');
+  const versePreview = document.getElementById('versePreview');
+  const shuffleVerseBtn = document.getElementById('shuffleVerseBtn');
+  const zenVerseBtn = document.getElementById('zenVerseBtn');
+  const fatherLottieFallback = document.getElementById('fatherLottieFallback');
+  let verseTrackIndex = 0;
+  let zenVerseInterval = null;
+  let zenVerseOn = false;
+
+  const reelItems = Array.from({ length: 28 }, (_, index) => {
+    const text = versePool[index % versePool.length];
+    return `<div class="reel-item">${text}</div>`;
+  }).join('');
+  verseReel.innerHTML = reelItems;
+
+  function shuffleVerse() {
+    verseTrackIndex = Math.floor(Math.random() * versePool.length);
+    const offset = verseTrackIndex * 68;
+    verseReel.classList.add('spinning');
+    verseReel.style.transition = 'transform 4.2s cubic-bezier(0.16, 1, 0.3, 1)';
+    verseReel.style.transform = `translateY(-${offset}px)`;
+    versePreview.textContent = versePool[verseTrackIndex];
+    setTimeout(() => {
+      verseReel.classList.remove('spinning');
+      verseReel.style.transition = 'none';
+    }, 4200);
+  }
+
+  shuffleVerseBtn.addEventListener('click', shuffleVerse);
+  zenVerseBtn.addEventListener('click', () => {
+    zenVerseOn = !zenVerseOn;
+    zenVerseBtn.classList.toggle('active', zenVerseOn);
+    zenVerseBtn.textContent = zenVerseOn ? 'Zen Mode: On' : 'Zen Mode: Off';
+    if (zenVerseOn) {
+      shuffleVerse();
+      zenVerseInterval = setInterval(() => {
+        shuffleVerse();
+      }, 15000);
+    } else if (zenVerseInterval) {
+      clearInterval(zenVerseInterval);
+      zenVerseInterval = null;
+    }
+  });
+
+  if (window.lottie) {
+    try {
+      lottie.loadAnimation({
+        container: document.getElementById('fatherLottie'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: 'father-day.json'
+      });
+      fatherLottieFallback.style.display = 'none';
+    } catch (error) {
+      console.warn('Father Day Lottie not loaded yet:', error);
+    }
+  }
 
   // ===== Confetti canvas (improved) =====
   const canvas = document.getElementById('confetti');
